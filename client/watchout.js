@@ -107,16 +107,16 @@ var drag = d3.behavior.drag()
     // sin(-x, y)???
   });
 
-var rotateShip = function () {
-  var tween = function (d, i, a) {
-    console.log(a);
-    return d3.interpolate('rotate(-60 300 300)', 'rotate(60 150 130)');
-  };
-  d3.select('.mouse')
-    .transition()
-    .duration(3000)
-    .attrTween('transform', tween.call(this, undefined, undefined, 'transform'));
-};
+// var rotateShip = function () {
+//   var tween = function (d, i, a) {
+//     console.log(a);
+//     return d3.interpolate('rotate(-60 300 300)', 'rotate(60 150 130)');
+//   };
+//   d3.select('.mouse')
+//     .transition()
+//     .duration(3000)
+//     .attrTween('transform', tween.call(this, undefined, undefined, 'transform'));
+// };
 
 // MAKE MOUSE
 var mouse = d3.select('svg').append('svg:image')
@@ -126,6 +126,36 @@ var mouse = d3.select('svg').append('svg:image')
   .attr('y', boardLength / 2)
   .classed('mouse', true)
   .call(drag);
+
+// ROTATE MOUSE
+var rotateShip = function (data) {
+  d3.select('.mouse')
+    .data(data)
+    .attr('transform', function (d, i) {
+      return 'rotate(' + d.angle + ' ' + d.x + ' ' + d.y + ')';
+    });
+};
+
+d3.select(window).on('mousemove', function() {
+  var cursorX = event.clientX;
+  var cursorY = event.clientY;
+  var mouseX = parseInt(d3.select('.mouse').attr('x'));
+  var mouseY = parseInt(d3.select('.mouse').attr('y'));
+  var someAngle;
+
+  if (mouseX > cursorX && mouseY > cursorY) {
+    someAngle = -45;
+  } else if (mouseX < cursorX && mouseY < cursorY) {
+    someAngle = 135;
+  } else if (mouseX < cursorX && mouseY > cursorY) {
+    someAngle = 45;
+  } else {
+    someAngle = 225;
+  }
+
+  rotateShip([{angle: someAngle + 15, x: (mouseX + 15), y: (mouseY + 15)}]);
+});
+
 
 // make mouse rotate on mouseover
 // d3.select('.mouse').on('mouseover', rotateShip);
