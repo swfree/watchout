@@ -6,4 +6,18 @@ Feel free to use it if you like. */
 svg{
   border: 1px solid black;
   padding: 20px;
+  background-color: #333333;
+}
+
+
+.enemies{
+
+}
+
+.mouse{
+  /*background-image: url('./assets/rocketship.png');*/
+}
+
+.stars{
+  fill: #ffe7b3;
 }
