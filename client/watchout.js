@@ -1,6 +1,7 @@
 // CONSTANTS
 var boardLength = 600;
 var numberOfEnemies = 15;
+var collisions = 0;
 
 // HELPERS
 /* Creates an Array of n Random Coordinates */
@@ -23,6 +24,17 @@ var checkCollision = function(d, i) {
   var separation = Math.sqrt(Math.pow((enemyX - mouseX), 2) + Math.pow((enemyY - mouseY), 2));
   if (separation < (40)) {
     updateScore();
+    collisions++;
+    if (collisions === 5) {
+      collisions = 0;
+      d3.select('.mouse')
+        .attr('height', 120).attr('width', 120)
+        .transition()
+        .attr('xlink:href', './assets/explosion.gif')
+        .transition().delay(2000)
+        .attr('height', 30).attr('width', 30)
+        .attr('xlink:href', './assets/rocketship.png');
+    }
   } else {
     increaseCurrentScore();
   }
@@ -37,13 +49,6 @@ var increaseCurrentScore = function() {
 
 /* Updates Score Board */
 var updateScore = function () {
-
-  // save current score
-  // save high score
-  // reset current score to zero
-  // if current score is greater than high score
-    // high score = current score
-
   var currentScore = parseInt(d3.select('.current').select('span').text()); 
   var highScore = parseInt(d3.select('.highscore').select('span').text()); 
   if (currentScore > highScore) {
@@ -97,26 +102,7 @@ d3.select('svg').selectAll('.enemies')
 var drag = d3.behavior.drag()
   .on('drag', function() { 
     mouse.attr('x', d3.event.x).attr('y', d3.event.y);
-    // .attr('transform', 'rotate(45 ' + d3.select('.mouse').attr('x') + ' ' + d3.select('.mouse').attr('y') + ')'); 
-    
-
-    // affect rocketship rotation
-    // find x and y coordinate before drag
-    // on drag compare new x and y coordinate to previous x and y coordinate
-    // rotate ship based on angle
-    // sin(-x, y)???
   });
-
-// var rotateShip = function () {
-//   var tween = function (d, i, a) {
-//     console.log(a);
-//     return d3.interpolate('rotate(-60 300 300)', 'rotate(60 150 130)');
-//   };
-//   d3.select('.mouse')
-//     .transition()
-//     .duration(3000)
-//     .attrTween('transform', tween.call(this, undefined, undefined, 'transform'));
-// };
 
 // MAKE MOUSE
 var mouse = d3.select('svg').append('svg:image')
@@ -155,21 +141,6 @@ d3.select(window).on('mousemove', function() {
 
   rotateShip([{angle: someAngle + 15, x: (mouseX + 15), y: (mouseY + 15)}]);
 });
-
-
-// make mouse rotate on mouseover
-// d3.select('.mouse').on('mouseover', rotateShip);
-
-// add mouse effects
-// d3.select('.mouse').attr('animation-name', 'spin')
-//   .attr('animation-duration', '3000')
-//   .attr('animation-iteration-count', 'infinite')
-//   .attr('transform-origin', '50% 50%')
-//   .attr('display', 'inline-block');
-
-// d3.select('.mouse').attr('transform', 'rotate(45 ' + d3.select('.mouse').attr('x') + ' ' + d3.select('.mouse').attr('y') + ')');
-
-
 
 // START ENEMY MOVEMENT
 setInterval(move, 2000);

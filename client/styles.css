@@ -3,27 +3,17 @@
 /* Note: an asteroid image is included in this repo.
 Feel free to use it if you like. */
 
-/* Rotate Attempt */
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 svg{
   background-color: black;
 }
 
-
-.enemies{
+body{
+  font-family: 'Roboto Mono', Arial;
 }
 
-.mouse{
+.board{
+  margin-top: 10px;
 }
-
 .stars{
   fill: #ffe7b3;
 }
