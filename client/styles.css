@@ -3,19 +3,25 @@
 /* Note: an asteroid image is included in this repo.
 Feel free to use it if you like. */
 
+/* Rotate Attempt */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 svg{
-  border: 1px solid black;
-  padding: 20px;
-  background-color: #333333;
+  background-color: black;
 }
 
 
 .enemies{
-
 }
 
 .mouse{
-  /*background-image: url('./assets/rocketship.png');*/
 }
 
 .stars{

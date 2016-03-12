@@ -1,9 +1,9 @@
 // CONSTANTS
 var boardLength = 600;
-var numberOfEnemies = 10;
+var numberOfEnemies = 15;
 
 // HELPERS
-/* Creates an array of 10 random coordinates */
+/* Creates an Array of n Random Coordinates */
 var randPositions = function(n) {
   n = n || numberOfEnemies;
   var result = [];
@@ -13,12 +13,12 @@ var randPositions = function(n) {
   return result;
 };
 
-/* Checks for collisions */
+/* Checks for Collisions */
 var checkCollision = function(d, i) {
-  var enemyX = d3.select(this).attr('cx');
-  var enemyY = d3.select(this).attr('cy');
-  var mouseX = d3.select('.mouse').attr('cx');
-  var mouseY = d3.select('.mouse').attr('cy');
+  var enemyX = d3.select(this).attr('x');
+  var enemyY = d3.select(this).attr('y');
+  var mouseX = d3.select('.mouse').attr('x');
+  var mouseY = d3.select('.mouse').attr('y');
   
   var separation = Math.sqrt(Math.pow((enemyX - mouseX), 2) + Math.pow((enemyY - mouseY), 2));
   if (separation < (40)) {
@@ -30,13 +30,12 @@ var checkCollision = function(d, i) {
 
 /* Increases Current Score */
 var increaseCurrentScore = function() {
-  // increase current score
   var currentScore = parseInt(d3.select('.current').select('span').text());
   currentScore++;
   d3.select('.current').select('span').text(currentScore + '');
 };
 
-/* Updates score board */
+/* Updates Score Board */
 var updateScore = function () {
 
   // save current score
@@ -53,33 +52,33 @@ var updateScore = function () {
   d3.select('.current').select('span').text('0');
 };
 
-/* Transitions enemy pieces */
+/* Transitions Enemy Pieces */
 var move = function () {
   d3.select('svg').selectAll('.enemies')
     .data(randPositions())
     .transition().duration(1500)
-    .attr('cx', function(d) { return d; })
+    .attr('x', function(d) { return d; })
     .tween('checkCollision', checkCollision)
     .each(function() {
       d3.selectAll('.enemies')
       .data(randPositions())
       .transition()
-      .attr('cy', function(d) { return d; });
+      .attr('y', function(d) { return d; });
     });
 };
 
-/* Add starry night sky */
+/* Add Starry Night Sky */
 var addStars = function () {
   d3.select('svg').selectAll('.stars')
-    .data(randPositions(50)).enter().append('circle')
+    .data(randPositions(75)).enter().append('circle')
     .attr('cx', function(d) { return d; })
     .attr('r', 1)
-    .data(randPositions(50)).attr('cy', function(d) { return d; })
+    .data(randPositions(75)).attr('cy', function(d) { return d; })
     .classed('stars', true);
 };
 
 // SVG HELPERS
-/* Sets up the game board */
+/* Sets up the Game Board */
 var svg = d3.select('.board').append('svg')
   .attr('width', boardLength)
   .attr('height', boardLength);
@@ -88,38 +87,59 @@ var svg = d3.select('.board').append('svg')
 addStars();
 
 d3.select('svg').selectAll('.enemies')
-  .data(randPositions()).enter().append('circle')
-  .attr('cx', function(d) { return d; })
-  .attr('r', 10)
-  .data(randPositions()).attr('cy', function(d) { return d; })
+  .data(randPositions()).enter().append('svg:image')
+  .attr('x', function(d) { return d; })
+  .data(randPositions()).attr('y', function(d) { return d; })
+  .attr('height', 30).attr('width', 30)
+  .attr('xlink:href', './assets/asteroid.png')
   .classed('enemies', true);
 
 var drag = d3.behavior.drag()
-  .on('drag', function() { mouse.attr('cx', d3.event.x).attr('cy', d3.event.y); });
+  .on('drag', function() { 
+    mouse.attr('x', d3.event.x).attr('y', d3.event.y);
+    // .attr('transform', 'rotate(45 ' + d3.select('.mouse').attr('x') + ' ' + d3.select('.mouse').attr('y') + ')'); 
+    
 
-// MAKE PATTERN IMAGE
-d3.select('svg').append('defs').append('pattern')
-  .attr('id', 'image').attr('x', 0)
-  .attr('y', 0).attr('patternUnits', 'userSpaceOnUse')
-  .attr('height', 20).attr('width', 20)
-  .append('image').attr('x', 0).attr('y', 0)
-  .attr('height', '100%').attr('width', '100%')
-  .attr('xlink:href', './assets/rocketship.png');
+    // affect rocketship rotation
+    // find x and y coordinate before drag
+    // on drag compare new x and y coordinate to previous x and y coordinate
+    // rotate ship based on angle
+    // sin(-x, y)???
+  });
 
+var rotateShip = function () {
+  var tween = function (d, i, a) {
+    console.log(a);
+    return d3.interpolate('rotate(-60 300 300)', 'rotate(60 150 130)');
+  };
+  d3.select('.mouse')
+    .transition()
+    .duration(3000)
+    .attrTween('transform', tween.call(this, undefined, undefined, 'transform'));
+};
 
 // MAKE MOUSE
-var mouse = d3.select('svg').append('circle')
-  // .attr('id', 'top')
-  // .attr('fill', 'url(#image)') 
-  // .attr('cx', boardLength / 2)
-  // .attr('cy', boardLength / 2).attr('r', 10)
-  // .classed('mouse', true).call(drag);
+var mouse = d3.select('svg').append('svg:image')
+  .attr('height', 30).attr('width', 30)
+  .attr('xlink:href', './assets/rocketship.png')
+  .attr('x', boardLength / 2)
+  .attr('y', boardLength / 2)
+  .classed('mouse', true)
+  .call(drag);
+
+// make mouse rotate on mouseover
+// d3.select('.mouse').on('mouseover', rotateShip);
+
+// add mouse effects
+// d3.select('.mouse').attr('animation-name', 'spin')
+//   .attr('animation-duration', '3000')
+//   .attr('animation-iteration-count', 'infinite')
+//   .attr('transform-origin', '50% 50%')
+//   .attr('display', 'inline-block');
+
+// d3.select('.mouse').attr('transform', 'rotate(45 ' + d3.select('.mouse').attr('x') + ' ' + d3.select('.mouse').attr('y') + ')');
 
 
-  .attr('fill', 'blue') 
-  .attr('cx', boardLength / 2)
-  .attr('cy', boardLength / 2).attr('r', 10)
-  .classed('mouse', true).call(drag);
 
 // START ENEMY MOVEMENT
 setInterval(move, 2000);
